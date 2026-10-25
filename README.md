@@ -33,40 +33,6 @@ Hệ thống CRM Chăm sóc Khách hàng là giải pháp phần mềm quản tr
 
 ![Sơ đồ kiến trúc Hệ thống CRM](docs/so_do_kien_truc_crm.png)
 
-```mermaid
-graph TD
-    User([Người dùng]) -->|HTTPS| Proxy[Reverse Proxy - Nginx<br/>HTTPS + Security Headers]
-
-    subgraph Monitoring ["Giám sát và log tập trung (Docker Compose - Ubuntu)"]
-        Grafana[Grafana]
-        Loki[Loki]
-        Prometheus[Prometheus]
-        Promtail[Promtail<br/>đọc log container]
-        Exporters[Exporters<br/>container, web, DB]
-
-        Promtail -->|đẩy log| Loki
-        Loki -->|log| Grafana
-        Exporters -->|thu metrics| Prometheus
-        Prometheus -->|metrics| Grafana
-    end
-
-    subgraph App ["Ứng dụng"]
-        Web[Web Python<br/>Flask + Gunicorn]
-        PgAdmin[pgAdmin<br/>Quản trị CSDL]
-    end
-
-    subgraph Database ["Cơ sở dữ liệu"]
-        Postgres[(PostgreSQL)]
-    end
-
-    Proxy -->|proxy| Grafana
-    Proxy -->|proxy| Web
-    Proxy -->|proxy| PgAdmin
-
-    Web -->|SQL| Postgres
-    PgAdmin -->|SQL| Postgres
-```
-
 
 ---
 
