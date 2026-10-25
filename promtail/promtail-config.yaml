@@ -12,10 +12,20 @@ scrape_configs:
   - job_name: containers
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
-        refresh_interval: 5s
+        refresh_interval: 3s
         filters:
           - name: label
             values: ["com.docker.compose.project=crm"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'service'
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
         target_label: 'job'
+      - source_labels: ['job']
+        regex: '^db$'
+        target_label: 'job'
+        replacement: 'postgres'
+      - source_labels: ['job']
+        regex: '^web$'
+        target_label: 'job'
+        replacement: 'webapp'
